@@ -13,5 +13,24 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Processing">
+      <UniqueIdentifier>{de3585aa-48eb-4cc8-9431-777a64f1b5e4}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Lexer.cpp">
+      <Filter>Processing</Filter>
+    </ClCompile>
+    <ClCompile Include="LexerFactory.cpp">
+      <Filter>Processing</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Lexer.hpp">
+      <Filter>Processing</Filter>
+    </ClInclude>
+    <ClInclude Include="LexerFactory.hpp">
+      <Filter>Processing</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
