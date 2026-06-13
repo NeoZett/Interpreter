@@ -21,10 +21,49 @@
     <ClCompile Include="Lexer.cpp">
       <Filter>Processing</Filter>
     </ClCompile>
+    <ClCompile Include="Source.cpp">
+      <Filter>Processing</Filter>
+    </ClCompile>
+    <ClCompile Include="Parser.cpp">
+      <Filter>Processing</Filter>
+    </ClCompile>
+    <ClCompile Include="AST.hpp">
+      <Filter>Processing</Filter>
+    </ClCompile>
+    <ClCompile Include="Interpreter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Transpiler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Compiler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Lexer.hpp">
       <Filter>Processing</Filter>
+    </ClInclude>
+    <ClInclude Include="Source.hpp">
+      <Filter>Processing</Filter>
+    </ClInclude>
+    <ClInclude Include="Parser.hpp">
+      <Filter>Processing</Filter>
+    </ClInclude>
+    <ClInclude Include="Token.hpp">
+      <Filter>Processing</Filter>
+    </ClInclude>
+    <ClInclude Include="Interpreter.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Transpiler.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Compiler.hpp">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
