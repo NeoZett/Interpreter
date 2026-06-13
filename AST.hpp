@@ -96,6 +96,18 @@ struct AssignmentExpression : Expression
     }
 };
 
+struct GroupingExpression : Expression
+{
+    std::unique_ptr<Expression> expression;
+
+    explicit GroupingExpression(
+        std::unique_ptr<Expression> expression)
+        : expression(std::move(expression)),
+		Expression(expression->location)
+    {
+    }
+};
+
 struct Statement : ASTNode
 {
     explicit Statement(SourceLocation location)

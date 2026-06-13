@@ -18,6 +18,12 @@ enum class TokenType
 	Equal,
 	EqualEqual,
 
+	Less,
+	LessEqual,
+
+	Greater,
+	GreaterEqual,
+
 	EndOfFile
 };
 

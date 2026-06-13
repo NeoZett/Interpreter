@@ -47,7 +47,7 @@ bool Lexer::isAtEnd() const
 	return index >= source->size();
 }
 
-char Lexer::peek(std::size_t offset = 0) const
+char Lexer::peek(std::size_t offset) const
 {
 	std::size_t pos = index + offset;
 
@@ -144,6 +144,32 @@ Token Lexer::makeSingle(TokenType type)
 	};
 }
 
+Token Lexer::makeDoubleOrSingle(
+	char first,
+	char second,
+	TokenType single,
+	TokenType dual)
+{
+	SourceLocation start = currentLocation();
+
+	advance();
+
+	if (match(second))
+	{
+		return {
+			dual,
+			std::string() + first + second,
+			start
+		};
+	}
+
+	return {
+		single,
+		std::string(1, first),
+		start
+	};
+}
+
 Token Lexer::nextToken()
 {
 	skipWhitespace();
@@ -186,26 +212,28 @@ Token Lexer::nextToken()
 		return makeSingle(TokenType::RightParen);
 
 	case '=':
-	{
-		SourceLocation start = currentLocation();
-
-		advance();
-
-		if (match('='))
-		{
-			return {
-				TokenType::EqualEqual,
-				"==",
-				start
-			};
-		}
-
-		return {
+		return makeDoubleOrSingle(
+			'=',
+			'=',
 			TokenType::Equal,
-			"=",
-			start
-		};
-	}
+			TokenType::EqualEqual
+		);
+
+	case '<':
+		return makeDoubleOrSingle(
+			'<',
+			'=',
+			TokenType::Less,
+			TokenType::LessEqual
+		);
+
+	case '>':
+		return makeDoubleOrSingle(
+			'>',
+			'=',
+			TokenType::Greater,
+			TokenType::GreaterEqual
+		);
 
 	default:
 		throw std::runtime_error(

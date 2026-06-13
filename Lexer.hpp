@@ -37,6 +37,11 @@ public:
 	Token identifier();
 	Token number();
 	Token makeSingle(TokenType type);
+	Token makeDoubleOrSingle(
+		char first,
+		char second,
+		TokenType single,
+		TokenType dual);
 	Token nextToken();
 	std::vector<Token> tokenize();
 };
