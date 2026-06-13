@@ -66,4 +66,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Parser">
+      <Filter>Processing</Filter>
+    </None>
+    <None Include="Lexer">
+      <Filter>Processing</Filter>
+    </None>
+  </ItemGroup>
 </Project>
