@@ -132,11 +132,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Lexer.hpp" />
-    <ClInclude Include="LexerFactory.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Lexer.cpp" />
-    <ClCompile Include="LexerFactory.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

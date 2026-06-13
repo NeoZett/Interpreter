@@ -50,8 +50,25 @@ struct SourceLocation
 	std::size_t column = 1;
 };
 
-template <typename TokenType>
-requires std::is_enum_v<TokenType>
+enum class TokenType
+{
+	Identifier,
+	Number,
+
+	Plus,
+	Minus,
+	Star,
+	Slash,
+
+	LeftParen,
+	RightParen,
+
+	Equal,
+	EqualEqual,
+
+	EndOfFile
+};
+
 struct Token
 {
 	TokenType type;
@@ -59,41 +76,54 @@ struct Token
 	SourceLocation location;
 };
 
-template <typename TokenType>
-requires std::is_enum_v<TokenType>
-class Lexer;
-
-template <typename TokenType>
-requires std::is_enum_v<TokenType>
-struct Rule
-{
-	using LexerT = Lexer<TokenType>;
-	using TokenT = Token<TokenType>;
-
-	virtual std::optional<TokenT>
-		tryConsume(LexerT& lexer) = 0;
-
-	virtual ~Rule() = default;
-};
-
-template <typename TokenType>
-requires std::is_enum_v<TokenType>
 class Lexer
 {
 private:
-	using RulePtr = std::unique_ptr<Rule<TokenType>>;
-
 	const Source* source;
-	std::vector<RulePtr> rules;
 	std::size_t index;
 	std::size_t line;
 	std::size_t column;
 
-public:
-	using TokenT = Token<TokenType>;
+	void skipWhitespace()
+	{
+		while (!isAtEnd())
+		{
+			char c = peek();
 
-	Lexer(const Source& source, std::vector<RulePtr> rules)
-		: source(&source), rules(std::move(rules)), index(0), line(1), column(1)
+			switch (c)
+			{
+			case ' ':
+			case '\t':
+			case '\r':
+			case '\n':
+				advance();
+				break;
+
+			default:
+				return;
+			}
+		}
+	}
+
+	static bool isAlpha(char c)
+	{
+		return std::isalpha(static_cast<unsigned char>(c))
+			|| c == '_';
+	}
+
+	static bool isDigit(char c)
+	{
+		return std::isdigit(static_cast<unsigned char>(c));
+	}
+
+	static bool isAlphaNumeric(char c)
+	{
+		return isAlpha(c) || isDigit(c);
+	}
+
+public:
+	Lexer(const Source& source)
+		: source(&source), index(0), line(1), column(1)
 	{
 	}
 
@@ -156,32 +186,127 @@ public:
 		return source->str().substr(start, index - start);
 	}
 
-	TokenT nextToken()
+	Token identifier()
 	{
-		if (isAtEnd())
-		{
-			return TokenT{ TokenType::EndOfFile, "", currentLocation() };
-		}
+		SourceLocation start = currentLocation();
+		std::size_t begin = index;
 
-		for (auto& rule : rules)
-		{
-			if (auto token = rule->tryConsume(*this))
-				return *token;
-		}
+		while (isAlphaNumeric(peek()))
+			advance();
 
-		throw std::runtime_error(
-			"Unexpected character: " + 
-			std::string(1, peek())
-		);
+		return {
+			TokenType::Identifier,
+			substrFrom(begin),
+			start
+		};
 	}
 
-	std::vector<TokenT> tokenize()
+	Token number()
 	{
-		std::vector<TokenT> tokens;
+		SourceLocation start = currentLocation();
+		std::size_t begin = index;
+
+		while (isDigit(peek()))
+			advance();
+
+		return {
+			TokenType::Number,
+			substrFrom(begin),
+			start
+		};
+	}
+
+	Token makeSingle(TokenType type)
+	{
+		SourceLocation start = currentLocation();
+
+		char c = advance();
+
+		return {
+			type,
+			std::string(1, c),
+			start
+		};
+	}
+
+	Token nextToken()
+	{
+		skipWhitespace();
+
+		if (isAtEnd())
+		{
+			return {
+				TokenType::EndOfFile,
+				"",
+				currentLocation()
+			};
+		}
+
+		char c = peek();
+
+		if (isAlpha(c))
+			return identifier();
+
+		if (isDigit(c))
+			return number();
+
+		switch (c)
+		{
+		case '+':
+			return makeSingle(TokenType::Plus);
+
+		case '-':
+			return makeSingle(TokenType::Minus);
+
+		case '*':
+			return makeSingle(TokenType::Star);
+
+		case '/':
+			return makeSingle(TokenType::Slash);
+
+		case '(':
+			return makeSingle(TokenType::LeftParen);
+
+		case ')':
+			return makeSingle(TokenType::RightParen);
+
+		case '=':
+		{
+			SourceLocation start = currentLocation();
+
+			advance();
+
+			if (match('='))
+			{
+				return {
+					TokenType::EqualEqual,
+					"==",
+					start
+				};
+			}
+
+			return {
+				TokenType::Equal,
+				"=",
+				start
+			};
+		}
+
+		default:
+			throw std::runtime_error(
+				"Unexpected character: " +
+				std::string(1, c)
+			);
+		}
+	}
+
+	std::vector<Token> tokenize()
+	{
+		std::vector<Token> tokens;
 
 		while (true)
 		{
-			TokenT token = nextToken();
+			Token token = nextToken();
 			tokens.push_back(token);
 
 			if (token.type == TokenType::EndOfFile)

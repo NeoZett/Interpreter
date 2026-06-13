@@ -21,15 +21,9 @@
     <ClCompile Include="Lexer.cpp">
       <Filter>Processing</Filter>
     </ClCompile>
-    <ClCompile Include="LexerFactory.cpp">
-      <Filter>Processing</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Lexer.hpp">
-      <Filter>Processing</Filter>
-    </ClInclude>
-    <ClInclude Include="LexerFactory.hpp">
       <Filter>Processing</Filter>
     </ClInclude>
   </ItemGroup>
