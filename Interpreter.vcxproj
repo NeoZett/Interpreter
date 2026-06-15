@@ -150,8 +150,11 @@
     <ClCompile Include="Transpiler.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Lexer" />
+    <None Include="Lexer">
+      <FileType>Document</FileType>
+    </None>
     <None Include="Parser" />
+    <None Include="Source" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

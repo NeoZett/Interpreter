@@ -22,6 +22,10 @@ private:
 	std::unique_ptr<Expression> parseFactor();
 	std::unique_ptr<Expression> parseUnary();
 	std::unique_ptr<Expression> parsePrimary();
+	std::unique_ptr<Expression> parsePostfix();
+
+	std::unique_ptr<FunctionDeclaration> parseFunction();
+	std::unique_ptr<ClassDeclaration> parseClass();
 
 public:
 	Parser(const Source& source);

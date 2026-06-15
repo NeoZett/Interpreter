@@ -109,9 +109,20 @@ Token Lexer::identifier()
 	while (isAlphaNumeric(peek()))
 		advance();
 
+	std::string text = substrFrom(begin);
+
+	TokenType type = TokenType::Identifier;
+
+	if (text == "class")
+		type = TokenType::Class;
+	else if (text == "function")
+		type = TokenType::Function;
+	else if (text == "return")
+		type = TokenType::Return;
+
 	return {
-		TokenType::Identifier,
-		substrFrom(begin),
+		type,
+		text,
 		start
 	};
 }
@@ -193,6 +204,9 @@ Token Lexer::nextToken()
 
 	switch (c)
 	{
+	case '.':
+		return makeSingle(TokenType::Dot);
+
 	case '+':
 		return makeSingle(TokenType::Plus);
 
@@ -210,6 +224,9 @@ Token Lexer::nextToken()
 
 	case ')':
 		return makeSingle(TokenType::RightParen);
+
+	case ';':
+		return makeSingle(TokenType::Semicolon);
 
 	case '=':
 		return makeDoubleOrSingle(

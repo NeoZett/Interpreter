@@ -73,5 +73,8 @@
     <None Include="Lexer">
       <Filter>Processing</Filter>
     </None>
+    <None Include="Source">
+      <Filter>Processing</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -7,13 +7,26 @@ enum class TokenType
 	Identifier,
 	Number,
 
+	Class,
+	Function,
+	Return,
+
+	Dot,
+
+	Comma,
+
+	LeftParen,
+	RightParen,
+
+	LeftBrace,
+	RightBrace,
+
 	Plus,
 	Minus,
 	Star,
 	Slash,
 
-	LeftParen,
-	RightParen,
+	Semicolon,
 
 	Equal,
 	EqualEqual,

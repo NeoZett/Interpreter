@@ -108,6 +108,54 @@ struct GroupingExpression : Expression
     }
 };
 
+struct AccessExpression : Expression
+{
+    std::unique_ptr<Expression> object;
+    Token member;
+
+    explicit AccessExpression(
+        std::unique_ptr<Expression> object,
+        Token member)
+        : object(std::move(object)),
+        member(std::move(member)),
+        Expression(member.location)
+    {
+    }
+};
+
+struct MemberAssignmentExpression : Expression
+{
+    std::unique_ptr<Expression> object;
+    Token member;
+    std::unique_ptr<Expression> value;
+
+    MemberAssignmentExpression(
+        std::unique_ptr<Expression> object,
+        Token member,
+        std::unique_ptr<Expression> value)
+        : object(std::move(object)),
+        member(std::move(member)),
+        value(std::move(value)),
+        Expression(member.location)
+    {
+    }
+};
+
+struct CallExpression : Expression
+{
+    std::unique_ptr<Expression> callee;
+    std::vector<std::unique_ptr<Expression>> arguments;
+
+    CallExpression(
+        std::unique_ptr<Expression> callee,
+        std::vector<std::unique_ptr<Expression>> arguments)
+        : callee(std::move(callee)),
+        arguments(std::move(arguments)),
+        Expression(callee->location)
+    {
+    }
+};
+
 struct Statement : ASTNode
 {
     explicit Statement(SourceLocation location)
@@ -139,6 +187,39 @@ struct VariableDeclaration : Statement
         : name(std::move(name)),
         initializer(std::move(initializer)),
 		Statement(name.location)
+    {
+    }
+};
+
+struct FunctionDeclaration : Statement
+{
+    Token name;
+    std::vector<Token> parameters;
+    std::vector<std::unique_ptr<Statement>> body;
+
+    FunctionDeclaration(
+        Token name,
+        std::vector<Token> parameters,
+        std::vector<std::unique_ptr<Statement>> body)
+        : name(std::move(name)),
+        parameters(std::move(parameters)),
+        body(std::move(body)),
+        Statement(name.location)
+    {
+    }
+};
+
+struct ClassDeclaration : Statement
+{
+    Token name;
+    std::vector<std::unique_ptr<FunctionDeclaration>> methods;
+
+    ClassDeclaration(
+        Token name,
+        std::vector<std::unique_ptr<FunctionDeclaration>> methods)
+        : name(std::move(name)),
+        methods(std::move(methods)),
+        Statement(name.location)
     {
     }
 };

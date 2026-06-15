@@ -2,6 +2,12 @@
 
 std::unique_ptr<Statement> Parser::parseStatement()
 {
+	if (check(TokenType::Function))
+		return parseFunction();
+
+	if (check(TokenType::Class))
+		return parseClass();
+
 	return std::make_unique<ExpressionStatement>(
 		parseExpression()
 	);
@@ -146,7 +152,7 @@ std::unique_ptr<Expression> Parser::parseUnary()
 		);
 	}
 
-	return parsePrimary();
+	return parsePostfix();
 }
 
 std::unique_ptr<Expression> Parser::parsePrimary()
@@ -178,6 +184,119 @@ std::unique_ptr<Expression> Parser::parsePrimary()
 
 	throw std::runtime_error(
 		"Expected expression."
+	);
+}
+
+std::unique_ptr<Expression> Parser::parsePostfix()
+{
+	auto expr = parsePrimary();
+
+	while (true)
+	{
+		if (match(TokenType::Dot))
+		{
+			Token member = peek();
+
+			expect(TokenType::Identifier);
+
+			expr = std::make_unique<AccessExpression>(
+				std::move(expr),
+				member
+			);
+		}
+		else if (match(TokenType::LeftParen))
+		{
+			std::vector<std::unique_ptr<Expression>> args;
+
+			if (!check(TokenType::RightParen))
+			{
+				do
+				{
+					args.push_back(parseExpression());
+				} while (match(TokenType::Comma));
+			}
+
+			expect(TokenType::RightParen);
+
+			expr = std::make_unique<CallExpression>(
+				std::move(expr),
+				std::move(args)
+			);
+		}
+		else
+		{
+			break;
+		}
+	}
+
+	return expr;
+}
+
+std::unique_ptr<FunctionDeclaration> Parser::parseFunction()
+{
+	expect(TokenType::Function);
+
+	Token name = peek();
+	expect(TokenType::Identifier);
+
+	expect(TokenType::LeftParen);
+
+	std::vector<Token> parameters;
+
+	if (!check(TokenType::RightParen))
+	{
+		do
+		{
+			Token param = peek();
+			expect(TokenType::Identifier);
+
+			parameters.push_back(param);
+		} while (match(TokenType::Comma));
+	}
+
+	expect(TokenType::RightParen);
+
+	expect(TokenType::LeftBrace);
+
+	std::vector<std::unique_ptr<Statement>> body;
+
+	while (!check(TokenType::RightBrace))
+	{
+		body.push_back(parseStatement());
+		match(TokenType::Semicolon);
+	}
+
+	expect(TokenType::RightBrace);
+
+	return std::make_unique<FunctionDeclaration>(
+		std::move(name),
+		std::move(parameters),
+		std::move(body)
+	);
+}
+
+std::unique_ptr<ClassDeclaration> Parser::parseClass()
+{
+	expect(TokenType::Class);
+
+	Token name = peek();
+	expect(TokenType::Identifier);
+	
+	expect(TokenType::LeftBrace);
+
+	std::vector<std::unique_ptr<FunctionDeclaration>>
+		methods;
+
+	while (!check(TokenType::RightBrace))
+	{
+		methods.push_back(parseFunction());
+	}
+
+	expect(TokenType::RightBrace);
+
+	return std::make_unique<ClassDeclaration>(
+		std::move(name),
+		std::move(methods)
 	);
 }
 
@@ -255,6 +374,7 @@ Program Parser::parse()
 	while (!isAtEnd())
 	{
 		program.statements.push_back(parseStatement());
+		match(TokenType::Semicolon);
 	}
 
 	return program;

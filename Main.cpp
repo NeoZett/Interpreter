@@ -68,7 +68,7 @@ static void printInfoStatement(const std::unique_ptr<Statement>& statement)
 
 int main()
 {
-	std::string sourceCode = "x = 5 + 3 * (2 - 1)";
+	std::string sourceCode = "x = 5 + 3 * (2 - 1);";
 	Source source(sourceCode);
 	Parser parser(source);
 	try
